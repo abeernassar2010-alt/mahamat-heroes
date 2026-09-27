@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مهام الأبطال | مدرسة ميت الكرد</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        chick: '#FFD93D', bunny: '#FF9ECD', cat: '#FF9F45',
+                        lion: '#FF6B35', fox: '#9B59B6', eagle: '#00B4D8',
+                        whatsapp: '#25D366', primary: '#FF6B35',
+                    },
+                    fontFamily: { cartoon: ['"Baloo Bhaijaan 2"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Baloo Bhaijaan 2', sans-serif; }
+        body { background: linear-gradient(180deg, #87CEEB 0%, #90EE90 100%); min-height: 100vh; }
+        .card-3d { border: 4px solid #000; border-radius: 20px; box-shadow: 6px 6px 0 rgba(0,0,0,0.2); transition: transform 0.2s; }
+        .card-3d:hover { transform: translateY(-4px); }
+        .btn-press:active { transform: translateY(3px); box-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        .float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .tab-btn.active { border-bottom: 4px solid #FF6B35; background: #fff7ed; }
+        .hidden { display: none !important; }
+        
+        /* ألعاب تفاعلية */
+        .game-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .game-card { 
+            width: 80px; height: 80px; border: 3px solid #000; border-radius: 10px; 
+            cursor: pointer; font-size: 40px; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+        .game-card:hover { transform: scale(1.1); }
+        .game-card.matched { background: #90EE90; pointer-events: none; }
+        .game-card.flipped { background: #FFD93D; }
+        
+        /* نظام النقاط */
+        .score-badge { 
+            display: inline-block; background: #FF6B35; color: white; 
+            padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 18px;
+        }
+        
+        /* تأثيرات الألعاب */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .bounce { animation: bounce 0.6s; }
+        
+        @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .spin { animation: spin 0.6s; }
+        
+        .game-container { max-width: 500px; margin: 0 auto; }
+    </style>
+</head>
+<body class="font-cartoon">
+    <header class="text-center py-4 px-4">
+        <div class="inline-block bg-white card-3d px-6 py-3">
+            <h1 class="text-3xl md:text-4xl font-bold text-orange-600">⚔️ مهام الأبطال ⚔️</h1>
+            <p class="text-sm text-gray-600 mt-1">🏫 ملتقى معلمات التعليم المجتمعى — مدرسة ميت الكرد — الدقهلية</p>
+            <p class="text-sm text-purple-600 font-medium">✨ إعداد: الأستاذة عبير نصار ✨</p>
+        </div>
+    </header>
+
+    <section class="px-4 mb-6">
+        <div class="bg-white/90 card-3d p-4">
+            <h2 class="text-lg font-bold text-center mb-3">🎒 اختر صفك البطل</h2>
+            <div class="grid grid-cols-3 md:grid-cols-6 gap-3" id="grade-buttons">
+                <button class="grade-btn card-3d p-3 text-center bg-yellow-100 border-yellow-400" data-grade="1" data-name="الكتاكيت الصغار 🐣">
+                    <div class="text-2xl">🐣</div><div class="font-bold text-sm">الأول</div>
+                </button>
+                <button class="grade-btn card-3d p-3 text-center bg-pink-100 border-pink-400" data-grade="2" data-name="الأرانب اللطيفة 🐰">
+                    <div class="text-2xl">🐰</div><div class="font-bold text-sm">الثاني</div>
+                </button>
+                <button class="grade-btn card-3d p-3 text-center bg-green-100 border-green-400" data-grade="3" data-name="القطط الذكية 🐱">
+                    <div class="text-2xl">🐱</div><div class="font-bold text-sm">الثالث</div>
+                </button>
+                <button class="grade-btn card-3d p-3 text-center bg-orange-100 border-orange-400" data-grade="4" data-name="الأسود الشجعان 🦁">
+                    <div class="text-2xl">🦁</div><div class="font-bold text-sm">الرابع</div>
+                </button>
+                <button class="grade-btn card-3d p-3 text-center bg-purple-100 border-purple-400" data-grade="5" data-name="الثعالب الماهرة 🦊">
+                    <div class="text-2xl">🦊</div><div class="font-bold text-sm">الخامس</div>
+                </button>
+                <button class="grade-btn card-3d p-3 text-center bg-cyan-100 border-cyan-400" data-grade="6" data-name="نسور التخرج 🦅">
+                    <div class="text-2xl">🦅</div><div class="font-bold text-sm">السادس</div>
+                </button>
+            </div>
+            <div id="grade-banner" class="mt-4 text-center hidden">
+                <div class="inline-block bg-gradient-to-r from-yellow-200 to-orange-200 card-3d px-6 py-3">
+                    <span id="grade-icon" class="text-4xl float"></span>
+                    <h3 id="grade-team-name" class="text-xl font-bold mt-2"></h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="px-4 mb-4">
+        <div class="flex flex-wrap justify-center gap-1 bg-white/80 rounded-t-2xl p-2 border-4 border-b-0 border-black/20">
+            <button class="tab-btn active px-4 py-2 rounded-t-xl font-bold transition-all" data-tab="students">👨‍👩‍👧 الطلاب</button>
+            <button class="tab-btn px-4 py-2 rounded-t-xl font-bold transition-all bg-gray-100" data-tab="assignments">📝 الواجبات</button>
+            <button class="tab-btn px-4 py-2 rounded-t-xl font-bold transition-all bg-gray-100" data-tab="games">🎮 الألعاب</button>
+            <button class="tab-btn px-4 py-2 rounded-t-xl font-bold transition-all bg-gray-100" data-tab="messages">📢 رسائل</button>
+        </div>
+    </section>
+
+    <main class="px-4 pb-20 max-w-4xl mx-auto">
+        <!-- تبويب الطلاب -->
+        <section id="students-tab" class="tab-content">
+            <div class="bg-white/95 card-3d p-5 mb-4">
+                <h3 class="text-xl font-bold mb-4">👨‍👩‍👧 أصدقاؤنا الأبطال</h3>
+                <button id="add-student-btn" class="bg-chick card-3d px-5 py-3 font-bold btn-press mb-4">➕ أضف بطلًا جديدًا</button>
+                <div id="student-form" class="hidden bg-yellow-50 p-4 rounded-xl border-2 border-yellow-300 mb-4">
+                    <h4 class="font-bold mb-3">اسم البطل ورقم ولي أمره 📱</h4>
+                    <input type="text" id="student-name" placeholder="اسم الطالب" class="w-full p-3 border-2 border-gray-200 rounded-xl mb-3">
+                    <input type="tel" id="student-whatsapp" placeholder="رقم واتساب ولي الأمر" class="w-full p-3 border-2 border-gray-200 rounded-xl mb-3">
+                    <div class="flex gap-2">
+                        <button id="save-student" class="bg-whatsapp text-white px-4 py-2 rounded-xl font-bold btn-press">✅ حفظ</button>
+                        <button id="cancel-student" class="bg-gray-300 px-4 py-2 rounded-xl font-bold btn-press">❌ إلغاء</button>
+                    </div>
+                </div>
+                <div id="students-list" class="space-y-3 mt-4">
+                    <p class="text-gray-500 text-center py-4">لم تضاف أسماء بعد.. أضف أول بطل! 🦸</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- تبويب الواجبات -->
+        <section id="assignments-tab" class="tab-content hidden">
+            <div class="bg-white/95 card-3d p-5 mb-4">
+                <h3 class="text-xl font-bold mb-4">📝 مهام الأبطال — إرسال مباشر عبر واتساب</h3>
+                <button id="add-assignment-btn" class="bg-lion text-white card-3d px-5 py-3 font-bold btn-press mb-4">➕ مهمة جديدة</button>
+                <div id="assignment-form" class="hidden bg-orange-50 p-4 rounded-xl border-2 border-orange-300 mb-4">
+                    <h4 class="font-bold mb-3">✍️ اكتب الواجب وأرسله مباشرة 💚</h4>
+                    <input type="text" id="task-title" placeholder="عنوان المهمة" class="w-full p-3 border-2 border-gray-200 rounded-xl mb-3" required>
+                    <textarea id="task-desc" rows="3" placeholder="تفاصيل المهمة..." class="w-full p-3 border-2 border-gray-200 rounded-xl mb-3"></textarea>
+                    <input type="date" id="task-date" class="w-full p-3 border-2 border-gray-200 rounded-xl mb-3" required>
+                    <input type="text" id="task-image" placeholder="📷 رابط صورة الواجب (من واتساب)" class="w-full p-3 border-2 border-blue-200 rounded-xl mb-3 bg-blue-50">
+                    <input type="text" id="task-answer" placeholder="✅ رابط الإجابة" class="w-full p-3 border-2 border-green-200 rounded-xl mb-3 bg-green-50">
+                    <div class="bg-gray-50 p-3 rounded-xl mb-3">
+                        <p class="text-sm font-bold mb-2">👁️ ما سيُرسل:</p>
+                        <div id="preview-msg" class="bg-white p-3 rounded-lg text-sm whitespace-pre-line border">سيظهر هنا...</div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="send-all" class="bg-whatsapp text-white px-4 py-3 rounded-xl font-bold btn-press flex-1">💚 إرسال الكل</button>
+                        <button id="send-image" class="bg-blue-500 text-white px-4 py-3 rounded-xl font-bold btn-press">📷 الصورة فقط</button>
+                        <button id="send-answer" class="bg-green-500 text-white px-4 py-3 rounded-xl font-bold btn-press">✅ الإجابة فقط</button>
+                    </div>
+                    <button id="cancel-assignment" class="mt-3 bg-gray-300 px-4 py-2 rounded-xl font-bold w-full btn-press">إلغاء</button>
+                </div>
+                <div id="assignments-list" class="space-y-4 mt-4">
+                    <p class="text-gray-500 text-center py-4">لا تزال مهام فارغة.. أنشئ أول مهمة! 📝</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- تبويب الألعاب التفاعلية -->
+        <section id="games-tab" class="tab-content hidden">
+            <div class="bg-white/95 card-3d p-5 mb-4">
+                <h3 class="text-xl font-bold mb-4 text-center">🎮 ألعاب تعليمية تفاعلية</h3>
+                <p id="game-warning" class="text-center text-red-600 font-bold mb-4">⚠️ الألعاب متاحة فقط للصفوف الأول والثاني والثالث!</p>
+                
+                <div id="games-content" class="hidden">
+                    <!-- اختيار اللعبة -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-6">
+                        <button class="game-select-btn card-3d px-6 py-3 bg-yellow-100 font-bold" data-game="memory">
+                            🧠 لعبة التذكر
+                        </button>
+                        <button class="game-select-btn card-3d px-6 py-3 bg-pink-100 font-bold" data-game="counting">
+                            🔢 لعبة العد
+                        </button>
+                        <button class="game-select-btn card-3d px-6 py-3 bg-green-100 font-bold" data-game="matching">
+                            🎯 لعبة المطابقة
+                        </button>
+                    </div>
+
+                    <!-- النقاط والإحصائيات -->
+                    <div class="text-center mb-4">
+                        <span class="score-badge">⭐ النقاط: <span id="game-score">0</span></span>
+                        <span class="score-badge mr-2">🏆 المستوى: <span id="game-level">1</span></span>
+                    </div>
+
+                    <!-- لعبة التذكر (Memory Game) -->
+                    <div id="memory-game" class="game-container hidden">
+                        <h4 class="text-center font-bold mb-4 text-lg">🧠 تذكري الأزواج المتطابقة!</h4>
+                        <div class="game-board" id="memory-board"></div>
+                        <button id="restart-memory" class="w-full mt-4 bg-orange-400 text-white py-3 rounded-xl font-bold btn-press">🔄 إعادة اللعبة</button>
+                    </div>
+
+                    <!-- لعبة العد -->
+                    <div id="counting-game" class="game-container hidden">
+                        <h4 class="text-center font-bold mb-4 text-lg">🔢 عدي الأشكال!</h4>
+                        <div class="text-center mb-6">
+                            <div id="counting-display" class="text-6xl mb-4"></div>
+                            <p class="text-2xl font-bold mb-6">كم عدد الأشكال؟</p>
+                            <div class="flex justify-center gap-4 flex-wrap">
+                                <button class="count-btn card-3d px-6 py-3 bg-yellow-200 font-bold text-2xl btn-press">1</button>
+                                <button class="count-btn card-3d px-6 py-3 bg-yellow-200 font-bold text-2xl btn-press">2</button>
+                                <button class="count-btn card-3d px-6 py-3 bg-yellow-200 font-bold text-2xl btn-press">3</button>
+                                <button class="count-btn card-3d px-6 py-3 bg-yellow-200 font-bold text-2xl btn-press">4</button>
+                                <button class="count-btn card-3d px-6 py-3 bg-yellow-200 font-bold text-2xl btn-press">5</button>
+                            </div>
+                        </div>
+                        <div id="counting-feedback" class="text-center text-xl font-bold mt-4"></div>
+                        <button id="next-counting" class="w-full mt-4 bg-orange-400 text-white py-3 rounded-xl font-bold btn-press">➡️ السؤال التالي</button>
+                    </div>
+
+                    <!-- لعبة المطابقة -->
+                    <div id="matching-game" class="game-container hidden">
+                        <h4 class="text-center font-bold mb-4 text-lg">🎯 طابقي الأشكال المتشابهة!</h4>
+                        <div id="matching-board" class="grid grid-cols-2 gap-4 mb-6"></div>
+                        <button id="restart-matching" class="w-full mt-4 bg-orange-400 text-white py-3 rounded-xl font-bold btn-press">🔄 إعادة اللعبة</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- تبويب الرسائل -->
+        <section id="messages-tab" class="tab-content hidden">
+            <div class="bg-white/95 card-3d p-5 mb-4">
+                <h3 class="text-xl font-bold mb-4">📢 رسائل سريعة لأولياء الأمور</h3>
+                <textarea id="custom-msg" rows="4" placeholder="اكتب رسالتك هنا..." class="w-full p-4 border-2 border-gray-200 rounded-xl mb-4 text-lg"></textarea>
+                <button id="send-custom" class="bg-whatsapp text-white w-full py-4 rounded-xl font-bold text-lg btn-press mb-6">💚 فتح واتساب والإرسال</button>
+                <h4 class="font-bold mb-3">⚡ رسائل جاهزة:</h4>
+                <div class="space-y-3">
+                    <button class="template-btn w-full text-right p-4 bg-yellow-50 rounded-xl border-2 border-yellow-200" data-text="📢 تذكير هام\nنرجو متابعة أبنائكم في حل الواجبات والمراجعة. شاكرين لكم تعاونكم المستمر 🌸\n— مدرسة ميت الكرد • عبير نصار">⏰ تذكير بالمتابعة</button>
+                    <button class="template-btn w-full text-right p-4 bg-green-50 rounded-xl border-2 border-green-200" data-text="🎉 تهنئة ومشاركة\nنبارك لكم تميز أبنائكم ونجاحهم! نرجو منكم تشجيعهم ومتابعتهم دائماً 🌟\n— مدرسة ميت الكرد • عبير نصار">🌟 تكريم وتفوق</button>
+                    <button class="template-btn w-full text-right p-4 bg-blue-50 rounded-xl border-2 border-blue-200" data-text="📢 إشعار\nنرجو الالتزام بمواعيد الحضور والانصراف، وإبلاغ المدرسة مسبقاً في حال الغياب. شكراً لكم 🤝\n— مدرسة ميت الكرد • عبير نصار">📋 متابعة وحضور</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <button id="help-btn" class="fixed bottom-20 left-6 w-14 h-14 bg-chick rounded-full text-2xl shadow-lg border-4 border-black/20 z-50 float">❓</button>
+
+    <div id="help-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden p-4">
+        <div class="bg-white card-3d p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">📖 دليل الاستخدام</h3>
+                <button id="close-help" class="text-2xl">✖️</button>
+            </div>
+            <div class="space-y-4 text-sm">
+                <div class="p-3 bg-yellow-50 rounded-xl border-2 border-yellow-200"><p class="font-bold">1️⃣ احفظي رابط المجموعة</p><p>ألصقي رابط واتساب في الأسفل → اضغطي حفظ ✅</p></div>
+                <div class="p-3 bg-green-50 rounded-xl border-2 border-green-200"><p class="font-bold">2️⃣ اختاري الصف</p><p>من الأزرار في الأعلى 🎒</p></div>
+                <div class="p-3 bg-orange-50 rounded-xl border-2 border-orange-200"><p class="font-bold">3️⃣ أضيفي الطلاب</p><p>الاسم + رقم واتساب ولي الأمر 📱</p></div>
+                <div class="p-3 bg-blue-50 rounded-xl border-2 border-blue-200"><p class="font-bold">4️⃣ أرسلي الواجب</p><p>اكتبي العنوان والتاريخ ولإرسال صورة: انسخي الرابط من واتساب والصقيه هنا 💚</p></div>
+                <div class="p-3 bg-purple-50 rounded-xl border-2 border-purple-200"><p class="font-bold">5️⃣ الألعاب التفاعلية</p><p>متاحة للصفوف الأول والثاني والثالث - ألعاب تعليمية مرحة! 🎮</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-3 z-40">
+        <div class="flex gap-2 max-w-4xl mx-auto">
+            <input type="url" id="group-whatsapp" placeholder="ألصقي رابط مجموعة واتساب هنا أولاً 👇" class="flex-1 p-2 border-2 border-gray-200 rounded-lg text-sm">
+            <button id="save-group" class="bg-whatsapp text-white px-4 rounded-lg font-bold text-sm">حفظ ✅</button>
+        </div>
+    </div>
+
+    <script>
+        let currentGrade = null;
+        let groupLink = localStorage.getItem('groupLink') || '';
+        let students = JSON.parse(localStorage.getItem('students') || '{}');
+        let assignments = JSON.parse(localStorage.getItem('assignments') || '{}');
+        let gameScore = 0;
+        let gameLevel = 1;
+        let currentGame = null;
+
+        // ========== إدارة الصفوف والبيانات الأساسية ==========
+        document.getElementById('group-whatsapp').value = groupLink;
+        document.getElementById('save-group').onclick = () => {
+            groupLink = document.getElementById('group-whatsapp').value.trim();
+            if(groupLink.includes('whatsapp')) {
+                localStorage.setItem('groupLink', groupLink);
+                alert('✅ تم حفظ الرابط!');
+            } else alert('❌ أدخلي رابط واتساب صحيح');
+        };
+
+        document.querySelectorAll('.grade-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.grade-btn').forEach(b => b.style.opacity = '0.7');
+                btn.style.opacity = '1';
+                currentGrade = btn.dataset.grade;
+                document.getElementById('grade-banner').classList.remove('hidden');
+                document.getElementById('grade-icon').textContent = btn.querySelector('.text-2xl').textContent;
+                document.getElementById('grade-team-name').textContent = btn.dataset.name;
+                renderStudents(); 
+                renderAssignments();
+                updateGamesAvailability();
+            };
+        });
+
+        // ========== التبويبات ==========
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('bg-gray-100'); });
+                btn.classList.add('active'); btn.classList.remove('bg-gray-100');
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(btn.dataset.tab + '-tab').classList.remove('hidden');
+            };
+        });
+
+        // ========== إدارة الألعاب التفاعلية ==========
+        function updateGamesAvailability() {
+            const gamesContent = document.getElementById('games-content');
+            const gameWarning = document.getElementById('game-warning');
+            
+            if(['1', '2', '3'].includes(currentGrade)) {
+                gamesContent.classList.remove('hidden');
+                gameWarning.classList.add('hidden');
+            } else {
+                gamesContent.classList.add('hidden');
+                gameWarning.classList.remove('hidden');
+            }
+        }
+
+        // اختيار اللعبة
+        document.querySelectorAll('.game-select-btn').forEach(btn => {
+            btn.onclick = () => {
+                currentGame = btn.dataset.game;
+                document.querySelectorAll('.game-select-btn').forEach(b => b.style.opacity = '0.5');
+                btn.style.opacity = '1';
+                
+                document.getElementById('memory-game').classList.add('hidden');
+                document.getElementById('counting-game').classList.add('hidden');
+                document.getElementById('matching-game').classList.add('hidden');
+                
+                if(currentGame === 'memory') initMemoryGame();
+                else if(currentGame === 'counting') initCountingGame();
+                else if(currentGame === 'matching') initMatchingGame();
+            };
+        });
+
+        // ========== لعبة التذكر (Memory Game) ==========
+        function initMemoryGame() {
+            const emojis = ['🍎', '🍎', '🍌', '🍌', '🍊', '🍊', '🍇', '🍇'];
+            const shuffled = emojis.sort(() => Math.random() - 0.5);
+            let flipped = [];
+            let matched = 0;
+
+            const board = document.getElementById('memory-board');
+            board.innerHTML = '';
+            
+            shuffled.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'game-card bg-gray-300';
+                card.textContent = '❓';
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                
+                card.onclick = () => {
+                    if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+                    
+                    card.classList.add('flipped', 'spin');
+                    card.textContent = emoji;
+                    flipped.push(card);
+                    
+                    if(flipped.length === 2) {
+                        setTimeout(() => {
+                            if(flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+                                flipped[0].classList.add('matched');
+                                flipped[1].classList.add('matched');
+                                flipped[0].classList.remove('flipped');
+                                flipped[1].classList.remove('flipped');
+                                matched++;
+                                gameScore += 10;
+                                
+                                if(matched === emojis.length / 2) {
+                                    setTimeout(() => {
+                                        alert('🎉 ممتازة! لقد فزتِ باللعبة!');
+                                        gameLevel++;
+                                        updateGameStats();
+                                    }, 500);
+                                }
+                            } else {
+                                flipped[0].classList.remove('flipped', 'spin');
+                                flipped[1].classList.remove('flipped', 'spin');
+                                flipped[0].textContent = '❓';
+                                flipped[1].textContent = '❓';
+                            }
+                            flipped = [];
+                            updateGameStats();
+                        }, 600);
+                    }
+                };
+                
+                board.appendChild(card);
+            });
+
+            document.getElementById('memory-game').classList.remove('hidden');
+            updateGameStats();
+        }
+
+        document.getElementById('restart-memory').onclick = initMemoryGame;
+
+        // ========== لعبة العد ==========
+        function initCountingGame() {
+            const shapes = ['🌟', '❤️', '🎈', '⭐', '🎀'];
+            generateCountingQuestion();
+            document.getElementById('counting-game').classList.remove('hidden');
+            updateGameStats();
+        }
+
+        function generateCountingQuestion() {
+            const shapes = ['🌟', '❤️', '🎈', '⭐', '🎀'];
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            const count = Math.floor(Math.random() * 5) + 1;
+            
+            let display = '';
+            for(let i = 0; i < count; i++) {
+                display += shape + ' ';
+            }
+            
+            document.getElementById('counting-display').textContent = display;
+            document.getElementById('counting-feedback').textContent = '';
+            
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                btn.onclick = () => {
+                    if(parseInt(btn.textContent) === count) {
+                        btn.style.background = '#90EE90';
+                        document.getElementById('counting-feedback').textContent = '✅ إجابة صحيحة! ممتازة!';
+                        gameScore += 10;
+                    } else {
+                        btn.style.background = '#FF6B6B';
+                        document.getElementById('counting-feedback').textContent = '❌ حاولي مرة أخرى!';
+                    }
+                    updateGameStats();
+                };
+                btn.style.background = '#FFF5AD';
+            });
+        }
+
+        document.getElementById('next-counting').onclick = generateCountingQuestion;
+
+        // ========== لعبة المطابقة ==========
+        function initMatchingGame() {
+            const pairs = [
+                {left: '🔴', right: '🟥'},
+                {left: '🔵', right: '🟦'},
+                {left: '🟢', right: '🟩'},
+                {left: '🟡', right: '🟨'},
+            ];
+
+            const shuffledPairs = pairs.sort(() => Math.random() - 0.5);
+            const board = document.getElementById('matching-board');
+            board.innerHTML = '';
+
+            let selected = null;
+            let matched = 0;
+
+            shuffledPairs.forEach((pair, index) => {
+                const leftCard = document.createElement('div');
+                leftCard.className = 'game-card bg-yellow-100 cursor-pointer';
+                leftCard.textContent = pair.left;
+                leftCard.dataset.pair = index;
+                leftCard.dataset.side = 'left';
+
+                const rightCard = document.createElement('div');
+                rightCard.className = 'game-card bg-pink-100 cursor-pointer';
+                rightCard.textContent = pair.right;
+                rightCard.dataset.pair = index;
+                rightCard.dataset.side = 'right';
+
+                [leftCard, rightCard].forEach(card => {
+                    card.onclick = () => {
+                        if(card.classList.contains('matched')) return;
+                        
+                        if(!selected) {
+                            selected = card;
+                            card.style.transform = 'scale(1.2)';
+                        } else if(selected === card) {
+                            card.style.transform = 'scale(1)';
+                            selected = null;
+                        } else if(selected.dataset.pair === card.dataset.pair) {
+                            selected.classList.add('matched');
+                            card.classList.add('matched');
+                            matched++;
+                            gameScore += 10;
+                            selected = null;
+                            selected.style.transform = 'scale(1)';
+                            
+                            if(matched === shuffledPairs.length) {
+                                alert('🎉 ممتازة جداً! لقد طابقتِ كل الأزواج!');
+                                gameLevel++;
+                            }
+                        } else {
+                            selected.style.transform = 'scale(1)';
+                            selected = null;
+                        }
+                        updateGameStats();
+                    };
+                });
+
+                board.appendChild(leftCard);
+                board.appendChild(rightCard);
+            });
+
+            document.getElementById('matching-game').classList.remove('hidden');
+            updateGameStats();
+        }
+
+        document.getElementById('restart-matching').onclick = initMatchingGame;
+
+        function updateGameStats() {
+            document.getElementById('game-score').textContent = gameScore;
+            document.getElementById('game-level').textContent = gameLevel;
+        }
+
+        // ========== إدارة الطلاب ==========
+        function openWA(text, phone = '') {
+            if(!groupLink && !phone) { alert('احفظي رابط المجموعة في الأسفل أولاً!'); return; }
+            const msg = encodeURIComponent(text);
+            window.open(phone ? `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}` : `${groupLink}&text=${msg}`, '_blank');
+        }
+
+        document.getElementById('add-student-btn').onclick = () => {
+            if(!currentGrade) return alert('اختاري الصف أولاً 🎒');
+            document.getElementById('student-form').classList.remove('hidden');
+        };
+        
+        document.getElementById('cancel-student').onclick = () => document.getElementById('student-form').classList.add('hidden');
+        
+        document.getElementById('save-student').onclick = () => {
+            const name = document.getElementById('student-name').value.trim();
+            const wa = document.getElementById('student-whatsapp').value.trim();
+            if(!name || !wa) return alert('أكملي البيانات من فضلك');
+            if(!students[currentGrade]) students[currentGrade] = [];
+            students[currentGrade].push({id:Date.now(), name, wa});
+            localStorage.setItem('students', JSON.stringify(students));
+            document.getElementById('student-name').value = '';
+            document.getElementById('student-whatsapp').value = '';
+            document.getElementById('student-form').classList.add('hidden');
+            renderStudents();
+        };
+
+        function renderStudents() {
+            const list = document.getElementById('students-list');
+            if(!currentGrade || !students[currentGrade] || !students[currentGrade].length) {
+                list.innerHTML = '<p class="text-gray-500 text-center py-4">لم تضاف أسماء بعد.. أضف أول بطل! 🦸</p>';
+                return;
+            }
+            list.innerHTML = students[currentGrade].map(s => `
+                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-xl border-2 border-yellow-200">
+                    <div><span class="font-bold text-lg">${s.name}</span><span class="text-sm text-gray-500 mr-2">📱 ${s.wa}</span></div>
+                    <button class="bg-whatsapp text-white px-3 py-1 rounded-lg text-sm font-bold btn-press" 
+                        onclick="openWA('السلام عليكم.. متابعة بخصوص ${s.name} 🌸', '${s.wa}')">💚 مراسلة</button>
+                </div>
+            `).join('');
+        }
+
+        // ========== إدارة الواجبات ==========
+        function makeMessage(type = 'all') {
+            const title = document.getElementById('task-title').value || '(العنوان)';
+            const desc = document.getElementById('task-desc').value || '';
+            const date = document.getElementById('task-date').value || '';
+            const img = document.getElementById('task-image').value || '';
+            const ans = document.getElementById('task-answer').value || '';
+            const gradeName = document.getElementById('grade-team-name').textContent || '(الصف)';
+            if(type === 'all') {
+                let m = `📌 *واجب دراسي جديد*\n📝 المهمة: ${title}\n🏫 الصف: ${gradeName}\n📅 التسليم قبل: ${date}\n\n${desc}`;
+                if(img) m += `\n📷 صورة المهمة:\n${img}`;
+                if(ans) m += `\n✅ الإجابة:\n${ans}`;
+                m += `\n\n— مدرسة ميت الكرد • عبير نصار 🌸`;
+                return m;
+            } else if(type === 'image') return `📷 صورة واجب: ${title}\n\n${img}\n\n— عبير نصار 🌸`;
+            else if(type === 'answer') return `✅ إجابة واجب: ${title}\n\n${ans}\n\n— عبير نصار 🌸`;
+        }
+
+        ['task-title','task-desc','task-date','task-image','task-answer'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', () => {
+                document.getElementById('preview-msg').textContent = makeMessage('all');
+            });
+        });
+
+        document.getElementById('add-assignment-btn').onclick = () => {
+            if(!currentGrade) return alert('اختاري الصف أولاً 🎒');
+            document.getElementById('assignment-form').classList.remove('hidden');
+        };
+        
+        document.getElementById('cancel-assignment').onclick = () => document.getElementById('assignment-form').classList.add('hidden');
+        
+        document.getElementById('send-all').onclick = () => {
+            if(!document.getElementById('task-title').value) return alert('اكتبي عنوان المهمة أولاً 📝');
+            openWA(makeMessage('all'));
+            saveAssignment();
+        };
+        
+        document.getElementById('send-image').onclick = () => {
+            if(!document.getElementById('task-image').value) return alert('ألصقي رابط الصورة أولاً 📷');
+            openWA(makeMessage('image'));
+        };
+        
+        document.getElementById('send-answer').onclick = () => {
+            if(!document.getElementById('task-answer').value) return alert('ألصقي رابط الإجابة أولاً ✅');
+            openWA(makeMessage('answer'));
+        };
+
+        function saveAssignment() {
+            if(!assignments[currentGrade]) assignments[currentGrade] = [];
+            assignments[currentGrade].push({
+                id: Date.now(), title: document.getElementById('task-title').value,
+                desc: document.getElementById('task-desc').value, date: document.getElementById('task-date').value,
+                image: document.getElementById('task-image').value, answer: document.getElementById('task-answer').value
+            });
+            localStorage.setItem('assignments', JSON.stringify(assignments));
+            document.getElementById('assignment-form').classList.add('hidden');
+            ['task-title','task-desc','task-date','task-image','task-answer'].forEach(id => document.getElementById(id).value = '');
+            renderAssignments();
+        }
+
+        function renderAssignments() {
+            const list = document.getElementById('assignments-list');
+            if(!currentGrade || !assignments[currentGrade] || !assignments[currentGrade].length) {
+                list.innerHTML = '<p class="text-gray-500 text-center py-4">لا تزال مهام فارغة.. أنشئ أول مهمة! 📝</p>';
+                return;
+            }
+            list.innerHTML = [...assignments[currentGrade]].reverse().map(a => `
+                <div class="card-3d p-4 bg-orange-50 border-orange-200">
+                    <h4 class="font-bold text-lg">📌 ${a.title}</h4>
+                    <p class="text-sm text-gray-600 mt-1">📅 التسليم: ${a.date}</p>
+                    ${a.desc ? `<p class="text-sm mt-2">${a.desc}</p>` : ''}
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button class="bg-whatsapp text-white px-3 py-1 rounded-lg text-sm font-bold btn-press" 
+                            onclick='openWA(makeMsg(${JSON.stringify(a)}, "all"))'>💚 إعادة الإرسال</button>
+                        ${a.image ? `<button class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-bold btn-press" 
+                            onclick="openWA('📷 صورة واجب: ${a.title}\\n\\n${a.image}\\n\\n— عبير نصار 🌸')">📷 الصورة</button>` : ''}
+                        ${a.answer ? `<button class="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-bold btn-press" 
+                            onclick="openWA('✅ إجابة واجب: ${a.title}\\n\\n${a.answer}\\n\\n— عبير نصار 🌸')">✅ الإجابة</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function makeMsg(a, type) {
+            const gradeName = document.getElementById('grade-team-name').textContent || '(الصف)';
+            if(type === 'all') {
+                let m = `📌 *واجب دراسي جديد*\n📝 المهمة: ${a.title}\n🏫 الصف: ${gradeName}\n📅 التسليم قبل: ${a.date}\n\n${a.desc}`;
+                if(a.image) m += `\n📷 صورة المهمة:\n${a.image}`;
+                if(a.answer) m += `\n✅ الإجابة:\n${a.answer}`;
+                m += `\n\n— مدرسة ميت الكرد • عبير نصار 🌸`;
+                return m;
+            }
+            return '';
+        }
+
+        // ========== إدارة الرسائل ==========
+        document.getElementById('send-custom').onclick = () => {
+            const txt = document.getElementById('custom-msg').value.trim();
+            if(!txt) return alert('اكتبي رسالتك أولاً 📝');
+            openWA(txt);
+        };
+
+        document.querySelectorAll('.template-btn').forEach(btn => {
+            btn.onclick = () => document.getElementById('custom-msg').value = btn.dataset.text.trim();
+        });
+
+        // ========== النافذة المساعدة ==========
+        document.getElementById('help-btn').onclick = () => document.getElementById('help-modal').classList.remove('hidden');
+        document.getElementById('close-help').onclick = () => document.getElementById('help-modal').classList.add('hidden');
+    </script>
+</body>
+</html>
